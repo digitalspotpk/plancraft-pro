@@ -28,10 +28,8 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      # IMPORTANT: replace "plancraft-pro" below with your actual repo name.
-      # This must match https://<username>.github.io/<repo-name>/
       - name: Build web release
-        run: flutter build web --release --base-href "/plancraft-pro/"
+        run: flutter build web --release --web-renderer html --base-href "/plancraft-pro/"
 
       - uses: actions/upload-pages-artifact@v3
         with:
