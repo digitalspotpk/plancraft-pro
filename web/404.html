@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<!--
+  GitHub Pages serves this file for ANY unknown path (e.g. a hard refresh on
+  /generator). Since PlanCraft uses clean path-based URLs (usePathUrlStrategy),
+  we redirect the browser back to index.html with the original path encoded
+  in a query param, and a tiny script in index.html (not needed here — GoRouter
+  reads location.pathname on boot) — in practice this simple redirect is enough
+  because Flutter's router reads window.location on startup.
+  See guide.html Section 2 for full deploy instructions.
+-->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>PlanCraft Pro AI</title>
+    <script>
+      // Redirect e.g. /repo-name/generator -> /repo-name/?redirect=/generator
+      var path = window.location.pathname;
+      var search = window.location.search;
+      var base = "/" + path.split('/')[1] + "/"; // first segment = repo name on GitHub Pages
+      sessionStorage.setItem('pc_redirect', path + search);
+      window.location.replace(base);
+    </script>
+  </head>
+  <body></body>
+</html>

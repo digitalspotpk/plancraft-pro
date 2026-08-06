@@ -1,0 +1,33 @@
+name: plancraft_pro
+description: "PlanCraft Pro AI - Flutter Web Edition"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+  flutter: 3.22.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+  flutter_riverpod: ^2.5.1
+  go_router: ^14.2.0
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  uuid: ^4.4.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner: ^2.4.11
+  hive_generator: ^2.0.1
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  # No external asset fonts / lottie files / images required —
+  # everything (particles, splash house, 2D plans, 3D boxes) is drawn with
+  # CustomPainter, so the app has ZERO network dependency at runtime
+  # (100% offline after the first page load, which is all GitHub Pages needs).

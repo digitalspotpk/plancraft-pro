@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlanCraft Pro AI — Setup & Deploy Guide</title>
+<style>
+  :root{
+    --bg:#05050A; --bg-elev:#0B0B14; --cyan:#00F5FF; --purple:#A855F7;
+    --text:#F5F6FA; --text-dim:#9CA3C0; --border:rgba(255,255,255,0.12);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:radial-gradient(circle at 20% 0%, #10101E, var(--bg) 60%);
+    color:var(--text); font-family:'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height:1.6; padding-bottom:80px;
+  }
+  header{
+    padding:64px 24px 40px; text-align:center; position:relative; overflow:hidden;
+  }
+  header::before{
+    content:""; position:absolute; inset:0;
+    background: radial-gradient(circle at 50% 0%, rgba(0,245,255,0.15), transparent 60%);
+    pointer-events:none;
+  }
+  h1.title{
+    font-size:2.6rem; margin:0; font-weight:800; letter-spacing:1px;
+    background:linear-gradient(90deg, var(--cyan), var(--purple));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    text-shadow:0 0 40px rgba(0,245,255,0.25);
+  }
+  header p{ color:var(--text-dim); margin-top:10px; font-size:1.05rem; }
+  .container{ max-width:880px; margin:0 auto; padding:0 24px; }
+  h2.neon{
+    font-size:1.5rem; margin-top:56px; margin-bottom:14px; font-weight:700;
+    color:var(--cyan); text-shadow:0 0 18px rgba(0,245,255,0.55);
+    border-left:4px solid var(--cyan); padding-left:14px;
+  }
+  h2.neon.purple{ color:var(--purple); border-left-color:var(--purple); text-shadow:0 0 18px rgba(168,85,247,0.55); }
+  h3{ color:var(--text); font-size:1.1rem; margin-top:28px; }
+  p{ color:var(--text-dim); }
+  .card{
+    background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:16px;
+    padding:22px 24px; margin:18px 0; backdrop-filter:blur(10px);
+  }
+  pre{
+    background:#08080F; border:1px solid var(--border); border-radius:12px;
+    padding:18px 20px; overflow-x:auto; margin:14px 0;
+    box-shadow: 0 0 0 1px rgba(0,245,255,0.05), 0 8px 30px rgba(0,0,0,0.5);
+  }
+  code{
+    font-family:'Fira Code','Cascadia Code',Consolas,monospace; font-size:0.92rem;
+    color:var(--cyan);
+  }
+  pre code{ color:#7CFFF5; }
+  .step-num{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:30px; height:30px; border-radius:50%;
+    background:linear-gradient(135deg, var(--cyan), var(--purple));
+    color:#000; font-weight:800; margin-right:10px; font-size:0.95rem;
+  }
+  ul, ol{ color:var(--text-dim); }
+  li{ margin-bottom:8px; }
+  .badge{
+    display:inline-block; padding:3px 10px; border-radius:20px; font-size:0.75rem;
+    border:1px solid var(--cyan); color:var(--cyan); margin-right:6px; margin-bottom:6px;
+  }
+  .warn{
+    border-left:4px solid #FFD23E; background:rgba(255,210,62,0.08);
+    padding:14px 18px; border-radius:10px; margin:16px 0; color:#FFE9A8;
+  }
+  .ok{
+    border-left:4px solid #39FFB0; background:rgba(57,255,176,0.08);
+    padding:14px 18px; border-radius:10px; margin:16px 0; color:#B9FFE3;
+  }
+  table{ width:100%; border-collapse:collapse; margin:14px 0; }
+  th, td{ text-align:left; padding:10px 14px; border-bottom:1px solid var(--border); color:var(--text-dim); }
+  th{ color:var(--text); }
+  a{ color:var(--cyan); }
+  footer{ text-align:center; margin-top:70px; color:var(--text-dim); font-size:0.85rem; }
+  .divider{ height:1px; background:linear-gradient(90deg, transparent, var(--border), transparent); margin:50px 0; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1 class="title">PLANCRAFT PRO AI</h1>
+  <p>Flutter Web Edition — Setup, Deploy &amp; Usage Guide</p>
+  <div>
+    <span class="badge">Flutter 3.22 Web</span>
+    <span class="badge">Riverpod</span>
+    <span class="badge">GoRouter</span>
+    <span class="badge">Hive</span>
+    <span class="badge">100% Offline</span>
+    <span class="badge">No APK</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <h2 class="neon">1. How to Run Locally</h2>
+  <div class="card">
+    <p><span class="step-num">1</span>Install Flutter 3.22+ and confirm the web target is enabled:</p>
+    <pre><code>flutter --version
+flutter config --enable-web</code></pre>
+
+    <p><span class="step-num">2</span>From the project root, fetch dependencies:</p>
+    <pre><code>flutter pub get</code></pre>
+
+    <p><span class="step-num">3</span>Run in Chrome for local development:</p>
+    <pre><code>flutter run -d chrome</code></pre>
+
+    <p><span class="step-num">4</span>Or just build a static release you can double-click / serve locally:</p>
+    <pre><code>flutter build web --release
+cd build/web
+python3 -m http.server 8080
+# then open http://localhost:8080</code></pre>
+
+    <div class="ok">✅ No backend, no API keys, no internet required at runtime — every screen (particles, splash, 2D plans, 3D viewer) is rendered with Flutter's CustomPainter and persisted locally via Hive (IndexedDB).</div>
+  </div>
+
+  <h2 class="neon purple">2. How to Deploy to GitHub Pages</h2>
+  <div class="card">
+    <p><span class="step-num">1</span>Create a GitHub repo (e.g. <code>plancraft-pro</code>) and push this project to the <code>main</code> branch.</p>
+
+    <p><span class="step-num">2</span>Build with the correct <code>--base-href</code> — this MUST match your repo name exactly, with leading and trailing slashes:</p>
+    <pre><code>flutter build web --release --base-href "/plancraft-pro/"</code></pre>
+
+    <div class="warn">⚠️ If you skip <code>--base-href</code>, the deployed site will load a blank white page on GitHub Pages because asset paths will point to the domain root instead of <code>/plancraft-pro/</code>.</div>
+
+    <p><span class="step-num">3</span>Upload the contents of <code>build/web</code> to GitHub Pages. Two ways:</p>
+
+    <h3>Option A — Manual (gh-pages branch)</h3>
+    <pre><code>cd build/web
+git init
+git add .
+git commit -m "Deploy PlanCraft Pro AI"
+git branch -M gh-pages
+git remote add origin https://github.com/&lt;you&gt;/plancraft-pro.git
+git push -f origin gh-pages</code></pre>
+    <p>Then in your repo: <b>Settings → Pages → Branch: gh-pages → / (root)</b>.</p>
+
+    <h3>Option B — Automatic (GitHub Actions, recommended)</h3>
+    <p>This project already ships a workflow at <code>.github/workflows/deploy.yml</code>. Just:</p>
+    <ol>
+      <li>Edit the <code>--base-href</code> value inside that file to match your repo name.</li>
+      <li>In your repo: <b>Settings → Pages → Source: GitHub Actions</b>.</li>
+      <li>Push to <code>main</code> — it builds and deploys automatically on every push.</li>
+    </ol>
+
+    <p><span class="step-num">4</span>Your app uses clean (path-based) URLs via <code>usePathUrlStrategy()</code>, not <code>#/</code> hash routing. This project already includes <code>web/404.html</code>, which redirects any deep link (e.g. a hard refresh on <code>/generator</code>) back to <code>index.html</code> so GitHub Pages' static hosting doesn't 404. No extra setup needed — it's already in the repo.</p>
+
+    <table>
+      <tr><th>File</th><th>Purpose</th></tr>
+      <tr><td><code>build/web/index.html</code></td><td>App entry point</td></tr>
+      <tr><td><code>build/web/404.html</code></td><td>SPA deep-link fallback for GitHub Pages</td></tr>
+      <tr><td><code>build/web/manifest.json</code></td><td>PWA install metadata</td></tr>
+    </table>
+  </div>
+
+  <h2 class="neon">3. How to Use the App</h2>
+  <div class="card">
+    <h3>Splash &amp; Loading</h3>
+    <p>On first load, a neon house draws itself over 3 seconds, then a glowing progress bar fills from 1% → 100% before landing on the Dashboard.</p>
+
+    <h3>Dashboard</h3>
+    <ul>
+      <li>Toggle between <b>2D Generator</b> and <b>3D Viewer</b> mode using the pill switch.</li>
+      <li>Two glassmorphism cards count up to show your total <b>Plans Generated</b> and <b>3D Views Rendered</b> — these numbers persist locally via Hive.</li>
+      <li>Tap <b>Open 2D Generator</b> / <b>Open 3D Viewer</b> to launch the selected mode. Tap <b>Theme Lab</b> (bottom right) to change the color scheme.</li>
+    </ul>
+
+    <h3>2D Generator</h3>
+    <ul>
+      <li>Enter your plot's <b>Length</b> and <b>Width</b> in feet.</li>
+      <li>Tap <b>Generate 5 Plans</b> — five distinct randomized layouts appear, each drawn live with <code>CustomPainter</code> (rooms, walls, dimensions).</li>
+      <li>Each card has its own <b>Refresh</b> icon (🔄) to re-roll just that one layout, and a <b>Download</b> icon (⬇) to export it as a PNG image.</li>
+    </ul>
+
+    <h3>3D Viewer</h3>
+    <ul>
+      <li>Pick which of your 5 generated plans to view from the dropdown at the top right.</li>
+      <li><b>Orbit:</b> click-and-drag anywhere on the 3D canvas to rotate the view.</li>
+      <li><b>Zoom:</b> pinch (trackpad/touch) or use the +/− buttons in the control bar.</li>
+      <li><b>Day / Night toggle:</b> switches ambient lighting and adds a soft glow to each room, simulating interior lights at night.</li>
+      <li><b>Reset Orbit</b> snaps the camera back to the default angle.</li>
+    </ul>
+
+    <h3>Theme Lab</h3>
+    <p>Choose from 10 neon color schemes. Tapping a tile applies it instantly app-wide with a soft flash transition, and your choice is remembered on your next visit (saved in Hive).</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2 class="neon purple">Tech Notes</h2>
+  <div class="card">
+    <ul>
+      <li><b>State management:</b> Riverpod (<code>StateNotifierProvider</code> for plan + theme state, <code>FutureProvider</code> for dashboard stats).</li>
+      <li><b>Routing:</b> GoRouter with clean URLs (see Section 2 for the 404.html trick).</li>
+      <li><b>Storage:</b> Hive (via <code>hive_flutter</code>), which runs on IndexedDB in the browser — fully offline, no server.</li>
+      <li><b>2D rendering:</b> Custom <code>CustomPainter</code> — no image assets, no canvas library dependency.</li>
+      <li><b>3D rendering:</b> A hand-built isometric matrix-projection <code>CustomPainter</code> (yaw/pitch/zoom), chosen over a Three.js/WebView bridge to avoid CDN dependencies and keep the app 100% offline-safe on static hosting.</li>
+    </ul>
+  </div>
+
+  <footer>PlanCraft Pro AI — Flutter Web Edition · Built for GitHub Pages · No APK, ever.</footer>
+</div>
+
+</body>
+</html>
