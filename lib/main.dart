@@ -59,7 +59,10 @@ void _showFatalOnDom(String message) {
       el = html.DivElement()
         ..id = 'fatal-error-box'
         ..style.position = 'fixed'
-        ..style.inset = '0'
+        ..style.top = '0'
+        ..style.left = '0'
+        ..style.right = '0'
+        ..style.bottom = '0'
         ..style.zIndex = '99999'
         ..style.background = '#05050A'
         ..style.color = '#FF4D6D'
