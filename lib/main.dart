@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'core/app_router.dart';
@@ -39,7 +40,9 @@ void main() {
       if (redirect != null && redirect.isNotEmpty) initialLocation = redirect;
     } catch (_) {}
 
-    runApp(ProviderScope(child: PlanCraftApp(initialLocation: initialLocation)));
+    runApp(ProviderScope(
+      child: PlanCraftApp(router: buildAppRouter(initialLocation)),
+    ));
   }, (error, stack) {
     _showFatalOnDom('FATAL: $error');
     if (kDebugMode) {
@@ -72,8 +75,8 @@ void _showFatalOnDom(String message) {
 }
 
 class PlanCraftApp extends ConsumerWidget {
-  final String initialLocation;
-  const PlanCraftApp({super.key, this.initialLocation = '/'});
+  final GoRouter router;
+  const PlanCraftApp({super.key, required this.router});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -82,7 +85,7 @@ class PlanCraftApp extends ConsumerWidget {
       title: 'PlanCraft Pro AI',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.dark(accent: scheme.primary),
-      routerConfig: buildAppRouter(initialLocation),
+      routerConfig: router,
     );
   }
 }
