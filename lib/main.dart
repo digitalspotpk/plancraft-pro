@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:html' as html;
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -8,26 +10,65 @@ import 'core/app_router.dart';
 import 'core/app_theme.dart';
 import 'providers/theme_provider.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+void main() {
+  runZonedGuarded<void>(() async {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  // Hive works fully offline on Flutter Web via IndexedDB — no server needed.
-  await Hive.initFlutter();
+    ErrorWidget.builder = (FlutterErrorDetails details) {
+      return Container(
+        color: const Color(0xFF05050A),
+        alignment: Alignment.center,
+        padding: const EdgeInsets.all(20),
+        child: Text(
+          'RENDER ERROR:\n${details.exceptionAsString()}',
+          style: const TextStyle(color: Color(0xFFFF4D6D), fontSize: 12, fontFamily: 'monospace'),
+        ),
+      );
+    };
+    FlutterError.onError = (FlutterErrorDetails details) {
+      FlutterError.presentError(details);
+      _showFatalOnDom('FLUTTER ERROR: ${details.exceptionAsString()}');
+    };
 
-  // Clean path-based URLs (no "#/") instead of GoRouter's default hash
-  // routing. NOTE: if you deploy under a sub-path on GitHub Pages
-  // (yourname.github.io/repo-name/) you MUST also add a 404.html that
-  // redirects back to index.html — see guide.html, Section 2.
-  usePathUrlStrategy();
+    await Hive.initFlutter();
+    usePathUrlStrategy();
 
-  // Completes the 404.html deep-link redirect loop: if 404.html stashed
-  // the originally-requested path in sessionStorage, jump straight there
-  // once the app boots (so a hard refresh on /generator still lands on
-  // /generator instead of always resetting to /).
-  final redirect = html.window.sessionStorage.remove('pc_redirect');
-  final initialLocation = (redirect != null && redirect.isNotEmpty) ? redirect : '/';
+    String initialLocation = '/';
+    try {
+      final redirect = html.window.sessionStorage.remove('pc_redirect');
+      if (redirect != null && redirect.isNotEmpty) initialLocation = redirect;
+    } catch (_) {}
 
-  runApp(ProviderScope(child: PlanCraftApp(initialLocation: initialLocation)));
+    runApp(ProviderScope(child: PlanCraftApp(initialLocation: initialLocation)));
+  }, (error, stack) {
+    _showFatalOnDom('FATAL: $error');
+    if (kDebugMode) {
+      // ignore: avoid_print
+      print('$error\n$stack');
+    }
+  });
+}
+
+void _showFatalOnDom(String message) {
+  try {
+    var el = html.document.getElementById('fatal-error-box');
+    if (el == null) {
+      el = html.DivElement()
+        ..id = 'fatal-error-box'
+        ..style.position = 'fixed'
+        ..style.inset = '0'
+        ..style.zIndex = '99999'
+        ..style.background = '#05050A'
+        ..style.color = '#FF4D6D'
+        ..style.fontFamily = 'monospace'
+        ..style.fontSize = '12px'
+        ..style.padding = '20px'
+        ..style.whiteSpace = 'pre-wrap'
+        ..style.overflow = 'auto';
+      html.document.body?.append(el);
+    }
+    el.text = ((el.text ?? '') + '\n' + message).trim();
+  } catch (_) {}
 }
 
 class PlanCraftApp extends ConsumerWidget {
