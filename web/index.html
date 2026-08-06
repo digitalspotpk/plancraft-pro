@@ -52,6 +52,17 @@
   <script src="flutter_bootstrap.js" async></script>
 
   <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function (regs) {
+        regs.forEach(function (r) { r.unregister(); });
+      }).catch(function () {});
+    }
+    if (window.caches && caches.keys) {
+      caches.keys().then(function (names) {
+        names.forEach(function (n) { caches.delete(n); });
+      }).catch(function () {});
+    }
+
     function showDiag(msg) {
       var d = document.getElementById('boot-diag');
       if (d) d.textContent = (d.textContent ? d.textContent + '\n' : '') + msg;
