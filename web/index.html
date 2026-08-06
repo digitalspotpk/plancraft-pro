@@ -49,5 +49,15 @@
   <div id="boot-loader"><div class="ring"></div></div>
 
   <script src="flutter_bootstrap.js" async></script>
+  <script>
+  window.addEventListener('flutter-first-frame', function () {
+    var loader = document.getElementById('boot-loader');
+    if (loader) loader.remove();
+  });
+  setTimeout(function () {
+    var loader = document.getElementById('boot-loader');
+    if (loader) loader.remove();
+  }, 12000);
+</script>
 </body>
 </html>
