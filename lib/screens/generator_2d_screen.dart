@@ -70,7 +70,6 @@ class _Generator2DScreenState extends ConsumerState<Generator2DScreen> {
                   ),
                   const SizedBox(height: 18),
 
-                  // Input row: Length x Width + Generate button
                   GlassCard(
                     child: Wrap(
                       crossAxisAlignment: WrapCrossAlignment.center,
@@ -102,18 +101,29 @@ class _Generator2DScreenState extends ConsumerState<Generator2DScreen> {
                   Expanded(
                     child: state.generatedBatch.isEmpty
                         ? const _EmptyState()
-                        : GridView.builder(
-                            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                              maxCrossAxisExtent: 360,
-                              mainAxisSpacing: 18,
-                              crossAxisSpacing: 18,
-                              childAspectRatio: 0.95,
-                            ),
-                            itemCount: state.generatedBatch.length,
-                            itemBuilder: (context, i) => _PlanCard(
-                              plan: state.generatedBatch[i],
-                              index: i,
-                            ),
+                        : LayoutBuilder(
+                            builder: (context, constraints) {
+                              final safeWidth = constraints.maxWidth.isFinite
+                                  ? constraints.maxWidth
+                                  : MediaQuery.of(context).size.width;
+                              return SizedBox(
+                                width: safeWidth,
+                                height: constraints.maxHeight.isFinite ? constraints.maxHeight : null,
+                                child: GridView.builder(
+                                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                                    maxCrossAxisExtent: 360,
+                                    mainAxisSpacing: 18,
+                                    crossAxisSpacing: 18,
+                                    childAspectRatio: 0.95,
+                                  ),
+                                  itemCount: state.generatedBatch.length,
+                                  itemBuilder: (context, i) => _PlanCard(
+                                    plan: state.generatedBatch[i],
+                                    index: i,
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                   ),
                 ],
