@@ -2,15 +2,11 @@ import 'package:flutter/material.dart';
 import '../core/app_theme.dart';
 import '../models/floor_plan.dart';
 
-/// Draws a floor plan: outer plot boundary (thick neon wall), interior
-/// room partitions (thinner walls), each room's fill tint, and its label.
-/// Scales the L x W plot (in feet) to fit inside the given canvas size
-/// while preserving aspect ratio.
 class FloorPlanPainter extends CustomPainter {
   final FloorPlan plan;
   final Color wallColor;
   final bool showLabels;
-  final double revealProgress; // 0..1 — for a subtle "blueprint draw-in" effect
+  final double revealProgress;
 
   FloorPlanPainter({
     required this.plan,
@@ -24,7 +20,8 @@ class FloorPlanPainter extends CustomPainter {
     final margin = 24.0;
     final availW = size.width - margin * 2;
     final availH = size.height - margin * 2;
-    final scale = (availW / plan.lengthFt).clamp(0, availH / plan.widthFt).toDouble();
+    final rawScale = (availW / plan.lengthFt).clamp(0, availH / plan.widthFt).toDouble();
+    final scale = rawScale.isFinite && rawScale > 0 ? rawScale : 1.0;
     final offset = Offset(
       margin + (availW - plan.lengthFt * scale) / 2,
       margin + (availH - plan.widthFt * scale) / 2,
@@ -37,9 +34,9 @@ class FloorPlanPainter extends CustomPainter {
           r.height * scale,
         );
 
-    final visibleCount = (plan.rooms.length * revealProgress).ceil().clamp(0, plan.rooms.length);
+    final safeProgress = revealProgress.isFinite ? revealProgress.clamp(0.0, 1.0) : 1.0;
+    final visibleCount = (plan.rooms.length * safeProgress).ceil().clamp(0, plan.rooms.length);
 
-    // Room fills + labels
     for (int i = 0; i < visibleCount; i++) {
       final room = plan.rooms[i];
       final rect = toCanvasRect(room.rect);
@@ -67,7 +64,6 @@ class FloorPlanPainter extends CustomPainter {
       }
     }
 
-    // Interior walls (partitions between rooms)
     final wallPaint = Paint()
       ..color = wallColor.withOpacity(0.85)
       ..style = PaintingStyle.stroke
@@ -77,7 +73,6 @@ class FloorPlanPainter extends CustomPainter {
       canvas.drawRect(toCanvasRect(plan.rooms[i].rect), wallPaint);
     }
 
-    // Outer plot boundary — thick glowing wall
     final outerRect = Rect.fromLTWH(offset.dx, offset.dy, plan.lengthFt * scale, plan.widthFt * scale);
     final glow = Paint()
       ..color = wallColor.withOpacity(0.5)
@@ -91,7 +86,6 @@ class FloorPlanPainter extends CustomPainter {
     canvas.drawRect(outerRect, glow);
     canvas.drawRect(outerRect, outerWall);
 
-    // Dimension labels along the two outer edges
     _drawDimension(canvas, Offset(outerRect.left, outerRect.bottom + 6),
         Offset(outerRect.right, outerRect.bottom + 6), '${plan.lengthFt.toStringAsFixed(0)} ft');
     _drawDimension(canvas, Offset(outerRect.right + 6, outerRect.top),
